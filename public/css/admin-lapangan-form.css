@@ -1,0 +1,120 @@
+/* Container form */
+.content-section {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Judul */
+.content-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Alert error */
+.alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alert ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* Form group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="file"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #66afe9;
+    outline: none;
+}
+
+/* Textarea */
+textarea {
+    resize: vertical;
+}
+
+/* Buttons simpan dan batal */
+.btn-submit,
+.btn-cancel {
+    padding: 10px 24px;
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    height: 42px;
+    /* tinggi sama */
+    box-sizing: border-box;
+    /* supaya padding masuk ukuran */
+    text-align: center;
+    vertical-align: middle;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    user-select: none;
+    border: 1px solid transparent;
+    text-decoration: none;
+    /* khusus btn-cancel agar link tidak bergaris */
+}
+
+.btn-submit {
+    background-color: #28a745;
+    /* hijau */
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-submit:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-cancel {
+    background-color: #dc3545;
+    /* merah */
+    border-color: #dc3545;
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}

@@ -31,6 +31,7 @@
                             <th>Nama</th>
                             <th>Deskripsi</th>
                             <th>Harga / Jam</th>
+                            <th>Gambar</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -41,6 +42,14 @@
                             <td data-label="Nama">{{ $lapangan->nama_lapangan }}</td>
                             <td data-label="Deskripsi">{{ $lapangan->deskripsi }}</td>
                             <td data-label="Harga / Jam">{{ $lapangan->harga_per_jam }}</td>
+                            <td data-label="Gambar">
+                                @if($lapangan->gambar)
+                                <img src="{{ asset('storage/lapangan/' . $lapangan->gambar) }}" alt="Gambar"
+                                    style="max-width: 100px;">
+                                @else
+                                <em>Tidak ada</em>
+                                @endif
+                            </td>
                             <td data-label="Status">{{ $lapangan->status_aktif ? 'Aktif' : 'Nonaktif' }}</td>
                             <td data-label="Aksi">
                                 <a href="{{ route('admin.lapangan.edit', $lapangan->id) }}" class="btn-edit">Edit</a>
@@ -56,6 +65,7 @@
                         @endforeach
                     </tbody>
                 </table>
+
             </section>
 
         </div>
