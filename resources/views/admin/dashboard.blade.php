@@ -1,19 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8" />
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
 </head>
 
 <body>
-    <h2>Dashboard Admin</h2>
+    <div class="wrapper">
 
-    <p>Selamat datang, {{ auth('pengguna')->user()->nama }}</p>
+        <!-- Sidebar -->
+        @include('layouts.sidebar')
 
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            @include('layouts.header')
+
+            <!-- Konten utama -->
+            <section>
+                <h2>Dashboard Admin</h2>
+                <p>Konten dashboard ada di sini.</p>
+            </section>
+        </div>
+
+    </div>
 </body>
 
 </html>
