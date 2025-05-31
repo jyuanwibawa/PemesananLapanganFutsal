@@ -1,0 +1,48 @@
+/* Styling untuk judul */
+h2 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Styling tabel */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header tabel */
+thead tr {
+    background-color: #007BFF;
+    color: white;
+    text-align: left;
+}
+
+thead th {
+    padding: 12px 15px;
+}
+
+/* Baris data */
+tbody tr {
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+    background-color: #f1f9ff;
+}
+
+/* Sel data */
+tbody td {
+    padding: 12px 15px;
+    color: #555;
+}
+
+/* Baris kosong */
+tbody tr td[colspan="5"] {
+    font-style: italic;
+    color: #999;
+    text-align: center;
+}

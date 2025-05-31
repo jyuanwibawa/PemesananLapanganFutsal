@@ -5,9 +5,11 @@
     padding: 0;
 }
 
-body,
-html {
-    height: 100%;
+html,
+body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f5f7fa;
     color: #333;
@@ -22,6 +24,7 @@ a {
 .wrapper {
     display: flex;
     height: 100vh;
+    /* penuh layar */
 }
 
 /* Sidebar */
@@ -32,6 +35,10 @@ a {
     display: flex;
     flex-direction: column;
     padding-top: 20px;
+    height: 100vh;
+    /* penuh tinggi layar */
+    overflow-y: auto;
+    /* scroll jika isinya lebih banyak */
 }
 
 .sidebar .logo {
@@ -77,6 +84,8 @@ a {
     position: sticky;
     top: 0;
     z-index: 10;
+    height: 60px;
+    /* tetap, supaya bisa kalkulasi */
 }
 
 .header .welcome {
@@ -107,14 +116,19 @@ a {
 /* Main Content */
 .main-content {
     flex-grow: 1;
+    height: calc(100vh - 60px);
+    /* tinggi viewport dikurangi tinggi header */
     padding: 30px;
     overflow-y: auto;
+    /* scroll jika konten overflow */
+    box-sizing: border-box;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .wrapper {
         flex-direction: column;
+        height: auto;
     }
 
     .sidebar {
@@ -144,5 +158,6 @@ a {
 
     .main-content {
         padding: 15px;
+        height: auto;
     }
 }

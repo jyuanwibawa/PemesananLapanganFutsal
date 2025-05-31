@@ -22,10 +22,10 @@ Route::post('/logout', [PenggunaController::class, 'logout'])->name('logout');
 
 // ================== Dashboard Routes ==================
 
-// Dashboard Admin (cek role di controller)
+// Dashboard Admin
 Route::get('/admin/dashboard', [PenggunaController::class, 'adminDashboard'])->name('admin.dashboard');
 
-// Dashboard Pengguna (cek role di controller)
+// Dashboard Pengguna
 Route::get('/pengguna/dashboard', [PenggunaController::class, 'penggunaDashboard'])->name('pengguna.dashboard');
 
 // ================== Admin Panel Routes ==================
