@@ -11,26 +11,37 @@ use App\Http\Controllers\Admin\PembayaranController;
 
 // Halaman Register
 Route::get('/register', [PenggunaController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [PenggunaController::class, 'register']);
+Route::post('/register', [PenggunaController::class, 'register'])->name('register.submit');
 
 // Halaman Login
 Route::get('/login', [PenggunaController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [PenggunaController::class, 'login']);
+Route::post('/login', [PenggunaController::class, 'login'])->name('login.submit');
 
 // Logout
 Route::post('/logout', [PenggunaController::class, 'logout'])->name('logout');
 
-// ================== Dashboard Routes ==================
+// ================== User Routes ==================
 
-// Dashboard Admin
-Route::get('/admin/dashboard', [PenggunaController::class, 'adminDashboard'])->name('admin.dashboard');
+Route::middleware('auth:pengguna')->group(function () {
+    // Dashboard Pengguna
+    Route::get('/pengguna/dashboard', [PenggunaController::class, 'penggunaDashboard'])->name('pengguna.dashboard');
 
-// Dashboard Pengguna
-Route::get('/pengguna/dashboard', [PenggunaController::class, 'penggunaDashboard'])->name('pengguna.dashboard');
+    // Riwayat Pemesanan
+    Route::get('/booking-history', [PenggunaController::class, 'showBookingHistory'])->name('pemesanan.index');
+
+    // Route untuk membuat pemesanan lapangan
+    Route::post('/create-booking', [PenggunaController::class, 'createBooking'])->name('create.booking');
+
+    // Route untuk konfirmasi pembayaran
+    Route::post('/pemesanan/{id}/bayar', [PenggunaController::class, 'confirmPayment'])->name('pemesanan.bayar');
+});
 
 // ================== Admin Panel Routes ==================
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth:pengguna')->group(function () {
+    // Dashboard Admin
+    Route::get('/dashboard', [PenggunaController::class, 'adminDashboard'])->name('dashboard');
+
     // CRUD Lapangan
     Route::resource('lapangan', LapanganController::class)->names('lapangan');
 
@@ -43,3 +54,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // CRUD Pembayaran
     Route::resource('pembayaran', PembayaranController::class)->names('pembayaran');
 });
+
+// ================== Additional Routes ==================
+
+// Rute untuk mengatur pengaturan (misalnya, mengatur profil pengguna)
+// Route::get('/settings', [ProfileController::class, 'settings'])->name('settings');
+
+// Rute untuk mendapatkan data lapangan berdasarkan ID (jika diperlukan)
+Route::get('/lapangan/{id}', [LapanganController::class, 'show'])->name('lapangan.show');

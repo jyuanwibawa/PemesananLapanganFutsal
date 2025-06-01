@@ -255,6 +255,125 @@
             margin-top: auto;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            display: flex;
+        }
+
+        .modal-image {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .modal-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-button {
+            background-color: #007bff;
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.25s ease;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .modal-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Form Modal Styles */
+        .form-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .total-hours {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Success Message Styles */
+        .success-message {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .success-message h3 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 2.7rem;
@@ -277,6 +396,17 @@
             nav ul {
                 gap: 1rem;
             }
+
+            .modal-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .modal-image {
+                padding-right: 0;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -284,8 +414,8 @@
 <body>
     <nav>
         <ul>
-            <li><a href="#history">History</a></li>
-            <li><a href="#booking">Booking</a></li>
+            <li><a href="{{ route('pemesanan.index') }}">Riwayat</a></li>
+            <li><a href="#booking">Pemesanan</a></li>
         </ul>
         <div class="user-info">
             <span>Hai, {{ auth('pengguna')->user()->nama }}</span>
@@ -332,18 +462,22 @@
             <section class="fields"
                 style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-top:1rem;">
                 @forelse ($lapangan as $lap)
-                <article class="field-card" tabindex="0">
-                    @if($lap->gambar)
-                    <img src="{{ asset('storage/' . $lap->gambar) }}" alt="Foto Lapangan {{ $lap->nama }}"
-                        class="field-image" />
-                    @else
-                    <img src="https://via.placeholder.com/400x250?text=No+Image" alt="Tidak ada gambar lapangan"
-                        class="field-image" />
-                    @endif
-                    <h3 class="field-title">{{ $lap->nama }}</h3>
+                <article class="field-card" tabindex="0"
+                    style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px;">
+                    <img src="{{ $lap->gambar ? asset('storage/' . $lap->gambar) : 'https://via.placeholder.com/400x250?text=No+Image' }}"
+                        alt="Foto Lapangan {{ $lap->nama_lapangan }}" class="field-image"
+                        style="width:100%; height:200px; object-fit:cover;" />
+                    <h3 class="field-title" style="margin-top: 1rem;">{{ $lap->nama_lapangan }}</h3>
+                    <p class="field-info">Deskripsi: {{ $lap->deskripsi }}</p>
+                    @if(isset($lap->kapasitas))
                     <p class="field-info">Kapasitas: {{ $lap->kapasitas }} pemain</p>
-                    <p class="field-info">Harga per jam: Rp {{ number_format($lap->harga, 0, ',', '.') }}</p>
-                    <button class="btn-details" onclick="alert('Detail lapangan: {{ addslashes($lap->nama) }}')">Lihat
+                    @endif
+                    <p class="field-info">Harga per jam: Rp {{ number_format($lap->harga_per_jam, 0, ',', '.') }}</p>
+                    <p class="field-info">Status: <span
+                            style="color: {{ $lap->status_aktif ? 'green' : 'red' }}; font-weight: bold;">{{ $lap->status_aktif ? 'Aktif' : 'Tidak Aktif' }}</span>
+                    </p>
+                    <button class="btn-details"
+                        onclick="showDetails('{{ addslashes($lap->id) }}', '{{ addslashes($lap->nama_lapangan) }}', '{{ addslashes($lap->deskripsi) }}', '{{ number_format($lap->harga_per_jam, 0, ',', '.') }}', '{{ $lap->gambar ? asset('storage/' . $lap->gambar) : 'https://via.placeholder.com/400x250?text=No+Image' }}', '{{ json_encode($lap->fasilitas) }}')">Lihat
                         Detail</button>
                 </article>
                 @empty
@@ -353,9 +487,150 @@
         </section>
     </main>
 
+    <!-- Modal for Field Details -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-image">
+                <img id="modalImage" src="" alt="" style="width: 100%; height: auto; border-radius: 8px;" />
+            </div>
+            <div class="modal-details">
+                <h2 id="modalTitle"></h2>
+                <p id="modalPrice"></p>
+                <p id="modalDescription"></p>
+                <h4>Fasilitas:</h4>
+                <ul id="modalFacilities"></ul>
+                <button class="modal-button" onclick="showBookingForm()">Pesan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookingModal" class="form-modal">
+        <div class="form-modal-content">
+            <span class="close" onclick="closeBookingForm()">&times;</span>
+            <h2>Pemesanan</h2>
+            <form id="bookingForm" method="POST" action="{{ route('create.booking') }}">
+                @csrf
+                <input type="hidden" id="idLapangan" name="id_lapangan" value="" />
+
+                <!-- Tampilkan nama lapangan dan harga per jam -->
+                <div class="form-group" id="fieldInfo">
+                    <label>Nama Lapangan</label>
+                    <p id="bookingFieldTitle"></p>
+                </div>
+                <div class="form-group">
+                    <label>Harga per Jam</label>
+                    <p id="bookingPrice"></p>
+                </div>
+                <div class="form-group">
+                    <label for="namaPemesanan">Nama Pemesanan</label>
+                    <input type="text" id="namaPemesanan" name="namaPemesanan"
+                        value="{{ auth('pengguna')->user()->nama }}" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="tanggal">Tanggal</label>
+                    <input type="date" id="tanggal" name="tanggal_booking" required />
+                </div>
+                <div class="form-group">
+                    <label for="jamMulai">Jam Mulai</label>
+                    <input type="time" id="jamMulai" name="jam_mulai" required onchange="calculateHours()" />
+                </div>
+                <div class="form-group">
+                    <label for="jamSelesai">Jam Selesai</label>
+                    <input type="time" id="jamSelesai" name="jam_selesai" required onchange="calculateHours()" />
+                </div>
+                <div class="total-hours" id="totalHours"></div>
+                <button type="submit" class="modal-button">Konfirmasi Pemesanan</button>
+            </form>
+        </div>
+    </div>
+
     <footer>
         &copy; 2025 Futsal Booking. Semua hak cipta dilindungi.
     </footer>
+
+    <script>
+        // Menampilkan detail lapangan dan fasilitas
+        function showDetails(id, title, description, price, image, facilities) {
+            document.getElementById("modalTitle").innerText = title;
+            document.getElementById("modalDescription").innerText = description;
+            document.getElementById("modalPrice").innerText = "Harga per jam: Rp " + price;
+            document.getElementById("modalImage").src = image;
+
+            // Set ID lapangan dan tampilkan informasi di form pemesanan
+            document.getElementById("idLapangan").value = id; // Ambil ID lapangan
+            document.getElementById("bookingFieldTitle").innerText = title; // Nama lapangan
+            document.getElementById("bookingPrice").innerText = "Rp " + price; // Harga per jam
+
+            // Mengeluarkan fasilitas ke dalam daftar
+            const modalFacilities = document.getElementById("modalFacilities");
+            modalFacilities.innerHTML = ''; // Kosongkan daftar fasilitas sebelumnya
+            const facilitiesList = JSON.parse(facilities);
+            facilitiesList.forEach(facility => {
+                const listItem = document.createElement('li');
+                listItem.innerText = facility.nama_fasilitas + " - " + facility.deskripsi;
+                modalFacilities.appendChild(listItem);
+            });
+
+            document.getElementById("myModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        function showBookingForm() {
+            document.getElementById("bookingModal").style.display = "block";
+        }
+
+        function closeBookingForm() {
+            document.getElementById("bookingModal").style.display = "none";
+            document.getElementById("totalHours").innerText = '';
+            document.getElementById("jamMulai").value = '';
+            document.getElementById("jamSelesai").value = '';
+            document.getElementById("idLapangan").value = ''; // Reset ID lapangan
+            document.getElementById("bookingFieldTitle").innerText = ''; // Reset nama lapangan
+            document.getElementById("bookingPrice").innerText = ''; // Reset harga per jam
+        }
+
+        function calculateHours() {
+            const jamMulai = document.getElementById("jamMulai").value;
+            const jamSelesai = document.getElementById("jamSelesai").value;
+
+            if (jamMulai && jamSelesai) {
+                const startTime = new Date(`1970-01-01T${jamMulai}:00`);
+                const endTime = new Date(`1970-01-01T${jamSelesai}:00`);
+
+                let hours = (endTime - startTime) / (1000 * 60 * 60); // Convert milliseconds to hours
+                if (hours < 0) {
+                    hours += 24; // Handle overnight booking
+                }
+
+                const pricePerHour = parseInt(document.getElementById("modalPrice").innerText.split('Rp ')[1].replace('.',
+                    ''));
+                const totalPrice = hours * pricePerHour;
+
+                document.getElementById("totalHours").innerText = `Total Jam: ${hours} jam`;
+                // Uncomment if needed in payment modal
+                // document.getElementById("paymentTotalHours").innerText = `Total Jam: ${hours} jam`;
+                // document.getElementById("paymentPricePerHour").innerText = `Harga per jam: Rp ${pricePerHour.toLocaleString()}`;
+                // document.getElementById("paymentTotal").innerText = `Total Pembayaran: Rp ${totalPrice.toLocaleString()}`;
+            }
+        }
+
+        // Close modal when the user clicks anywhere outside of the modal
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+
+            const bookingModal = document.getElementById("bookingModal");
+            if (event.target === bookingModal) {
+                bookingModal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 
 </html>
