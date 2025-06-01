@@ -33,7 +33,7 @@ Route::middleware('auth:pengguna')->group(function () {
     Route::post('/create-booking', [PenggunaController::class, 'createBooking'])->name('create.booking');
 
     // Route untuk konfirmasi pembayaran
-    Route::post('/pemesanan/{id}/bayar', [PenggunaController::class, 'confirmPayment'])->name('pemesanan.bayar');
+    Route::post('/pembayaran', [PenggunaController::class, 'createPembayaran'])->name('create.pembayaran');
 });
 
 // ================== Admin Panel Routes ==================

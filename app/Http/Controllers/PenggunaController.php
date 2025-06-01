@@ -95,7 +95,41 @@ class PenggunaController extends Controller
         $lapangan = Lapangan::with('fasilitas')->get();
         return view('pengguna.dashboard', compact('user', 'lapangan'));
     }
+    public function createPembayaran(Request $request)
+    {
+        // Validasi data pembayaran
+        $request->validate([
+            'id_booking' => 'required|exists:booking,id',
+            'metode_bayar' => 'required|string|max:50',
+            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Hanya menerima file gambar
+        ]);
 
+        // Proses upload bukti bayar
+        if ($request->hasFile('bukti_bayar')) {
+            $file = $request->file('bukti_bayar');
+            $filePath = $file->store('bukti_bayar', 'public'); // Menyimpan di storage/app/public/bukti_bayar
+
+            // Log pembuatan pembayaran
+            $pembayaranData = [
+                'id_booking' => $request->id_booking,
+                'id_pengguna' => Auth::guard('pengguna')->user()->id,
+                'metode_bayar' => $request->metode_bayar,
+                'bukti_bayar' => $filePath, // Simpan path file yang diupload
+                'status_verifikasi' => 'pending', // Menggunakan string enum
+            ];
+
+            \Log::info('Creating a new pembayaran:', $pembayaranData);
+
+            // Membuat entri pembayaran
+            Pembayaran::create($pembayaranData);
+
+            \Log::info('Pembayaran created successfully:', ['pembayaran' => $pembayaranData]);
+
+            return redirect()->route('pengguna.dashboard')->with('success', 'Pembayaran berhasil diajukan, menunggu verifikasi admin.');
+        }
+
+        return back()->withErrors(['bukti_bayar' => 'Gagal mengunggah bukti pembayaran.'])->withInput();
+    }
     public function createBooking(Request $request)
     {
         $request->validate([

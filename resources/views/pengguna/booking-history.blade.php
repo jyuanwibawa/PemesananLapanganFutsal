@@ -178,7 +178,6 @@
                 {{ session('error') }}
             </div>
             @endif
-
             <div class="booking-list">
                 @forelse($bookings as $booking)
                 <article class="booking-card">
@@ -189,6 +188,7 @@
                     <p class="field-info">Harga per Jam: Rp
                         {{ number_format($booking->lapangan->harga_per_jam, 0, ',', '.') }}
                     </p>
+
                     @php
                     // Calculate total price
                     $startTime = new DateTime($booking->jam_mulai);
@@ -198,27 +198,54 @@
                     $totalPrice = $hours * $booking->lapangan->harga_per_jam;
                     @endphp
                     <p class="field-info">Total Harga: Rp {{ number_format($totalPrice, 0, ',', '.') }}</p>
-                    <p class="field-info">Status:
+
+                    <p class="field-info">Status Pemesanan:
                         <span
-                            class="status 
-                            {{ $booking->status === 'terkonfirmasi' ? 'status-terkonfirmasi' : ($booking->status === 'pending' ? 'status-pending' : 'status-cancelled') }}">
+                            class="status {{ $booking->status === 'terkonfirmasi' ? 'status-terkonfirmasi' : ($booking->status === 'pending' ? 'status-pending' : 'status-cancelled') }}">
                             {{ ucfirst($booking->status) }}
                         </span>
                     </p>
 
-                    @if($booking->status === 'terkonfirmasi')
-                    <button class="btn-details"
-                        onclick="showPaymentForm({{ $booking->id }}, {{ Auth::guard('pengguna')->user()->id }}, '{{ $booking->lapangan->nama_lapangan }}', '{{ $booking->tanggal_booking }}', '{{ $booking->jam_mulai }}')">
-                        Lakukan Pembayaran
+                    @if($booking->status === 'pending')
+                    <p class="field-info"><strong>Maaf, Anda tidak bisa melakukan pembayaran.</strong></p>
+                    <p class="field-info">Komentar: "Pemesanan Anda saat ini masih dalam proses. Silakan tunggu beberapa
+                        saat hingga pemesanan ini dikonfirmasi."</p>
+                    @elseif($booking->status === 'terkonfirmasi')
+                    <p class="field-info"><strong>Pembayaran sudah terkonfirmasi. Anda tidak perlu melakukan pembayaran
+                            lagi.</strong></p>
+                    <button class="btn-details" disabled>
+                        Pembayaran Sudah Dikonfirmasi
                     </button>
+                    @elseif($booking->status === 'ditolak')
+                    <p class="field-info"><strong>Maaf, Anda tidak bisa melakukan pembayaran.</strong></p>
+                    <p class="field-info">Komentar: "Maaf, pemesanan Anda telah ditolak. Anda tidak dapat melakukan
+                        pembayaran."</p>
+                    @endif
+
+                    <!-- Menampilkan status pembayaran -->
+                    @if($booking->pembayaran)
+                    <!-- Pastikan ada relasi untuk Melihat status pembayaran -->
+                    <p class="field-info">Status Pembayaran:
+                        <span
+                            class="status 
+                {{ $booking->pembayaran->status_verifikasi === 'pending' ? 'status-pending' : ($booking->pembayaran->status_verifikasi === 'terkonfirmasi' ? 'status-terkonfirmasi' : 'status-cancelled') }}">
+                            {{ ucfirst($booking->pembayaran->status_verifikasi) }}
+                        </span>
+                    </p>
+
+                    @if($booking->pembayaran->status_verifikasi === 'pending')
+                    <p class="field-info"><strong>Menunggu konfirmasi pembayaran.</strong></p>
+                    @elseif($booking->pembayaran->status_verifikasi === 'terkonfirmasi')
+                    <p class="field-info"><strong>Pembayaran telah terkonfirmasi!</strong></p>
+                    @elseif($booking->pembayaran->status_verifikasi === 'ditolak')
+                    <p class="field-info"><strong>Pembayaran Anda ditolak. Silakan coba lagi.</strong></p>
+                    @endif
                     @endif
                 </article>
                 @empty
                 <p>Tidak ada riwayat pemesanan.</p>
                 @endforelse
             </div>
-
-            <!-- Modal untuk Pembayaran -->
             <div id="paymentModal" class="payment-modal">
                 <div class="payment-modal-content">
                     <span class="close" onclick="closePaymentModal()">&times;</span>
@@ -229,12 +256,23 @@
                     <p><strong>Tanggal:</strong> <span id="modalDate"></span></p>
                     <p><strong>Jam:</strong> <span id="modalTime"></span></p>
 
-                    <form id="paymentForm" method="POST">
+                    <form id="paymentForm" method="POST" action="{{ route('create.pembayaran') }}"
+                        enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id" id="bookingId" value="" />
+                        <input type="hidden" name="id_booking" id="bookingId" value="" />
+
                         <div class="upload-group">
                             <label for="uploadImage">Upload Bukti Pembayaran</label>
-                            <input type="file" id="uploadImage" name="uploadImage" required />
+                            <input type="file" id="uploadImage" name="bukti_bayar" required accept="image/*" />
+                        </div>
+                        <div class="upload-group">
+                            <label for="metode_bayar">Metode Pembayaran</label>
+                            <select name="metode_bayar" id="metode_bayar" required>
+                                <option value="Transfer Bank">Transfer Bank</option>
+                                <option value="Doku">Doku</option>
+                                <option value="OVO">OVO</option>
+                                <option value="Gopay">Gopay</option>
+                            </select>
                         </div>
                         <button type="submit" class="modal-button">Kirim Pembayaran</button>
                     </form>
@@ -261,6 +299,7 @@
         function closePaymentModal() {
             document.getElementById('paymentModal').style.display = 'none';
             document.getElementById('uploadImage').value = ''; // Kosongkan input file
+            document.getElementById('metode_bayar').selectedIndex = 0; // Reset dropdown metode pembayaran
         }
 
         // Penanganan klik di luar modal untuk menutup
