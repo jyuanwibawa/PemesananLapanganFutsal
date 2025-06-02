@@ -19,7 +19,7 @@ table {
 
 thead th {
     background-color: #343a40;
-    /* biru bootstrap */
+    /* Biru bootstrap */
     color: #fff;
     padding: 12px;
     text-align: left;
@@ -42,20 +42,47 @@ tbody tr:hover {
 }
 
 /* Tombol edit */
-.btn-edit {
-    display: inline-block;
+.btn-edit,
+.btn-delete {
     padding: 6px 12px;
-    background-color: #28a745;
-    /* hijau */
-    color: white;
-    text-decoration: none;
+    /* Padding untuk tombol */
+    border: none;
+    /* Menghilangkan batas */
     border-radius: 4px;
+    /* Membuat sudut tombol melengkung */
+    cursor: pointer;
+    /* Mengubah cursor saat hover */
     font-size: 14px;
+    /* Ukuran font untuk tombol */
     transition: background-color 0.3s ease;
+    /* Efek transisi */
+}
+
+.btn-edit {
+    background-color: #28a745;
+    /* Hijau */
+    color: white;
+    /* Teks berwarna putih */
+    text-decoration: none;
+    /* Menghilangkan garis bawah */
 }
 
 .btn-edit:hover {
     background-color: #218838;
+    /* Hijau lebih gelap saat hover */
+}
+
+/* Tombol hapus */
+.btn-delete {
+    background-color: #f44336;
+    /* Merah */
+    color: white;
+    /* Teks berwarna putih */
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+    /* Merah lebih gelap saat hover */
 }
 
 /* Responsive untuk layar kecil */
@@ -68,36 +95,52 @@ tbody tr:hover {
     td,
     tr {
         display: block;
+        /* Mengubah tampilan menjadi blok */
     }
 
     thead {
         display: none;
+        /* Menyembunyikan header */
     }
 
     tbody tr {
         margin-bottom: 15px;
         background: #fff;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        /* Bayangan untuk baris */
         border-radius: 8px;
+        /* Sudut melengkung di baris */
         padding: 10px;
+        /* Padding untuk baris */
     }
 
     tbody td {
         position: relative;
         padding-left: 50%;
+        /* Menambahkan padding kiri */
         border: none;
+        /* Menghilangkan batas */
         border-bottom: 1px solid #eee;
+        /* Membuat batas dibawah */
         text-align: left;
+        /* Penataan teks ke kiri */
     }
 
     tbody td:before {
         position: absolute;
         top: 12px;
+        /* Posisi untuk label */
         left: 12px;
+        /* Posisi untuk label */
         width: 45%;
+        /* Lebar label */
         font-weight: 600;
+        /* Menebalkan label */
         white-space: nowrap;
+        /* Mencegah pemecahan kata */
         content: attr(data-label);
+        /* Mengambil data label */
         color: #555;
+        /* Warna label */
     }
 }

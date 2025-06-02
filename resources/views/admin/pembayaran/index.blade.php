@@ -43,7 +43,15 @@
                             <td>{{ $bayar->metode_bayar }}</td>
                             <td>{{ $bayar->status_verifikasi }}</td>
                             <td>
-                                <a href="{{ route('admin.pembayaran.edit', $bayar->id) }}" class="btn-edit">Edit</a>
+
+                                <!-- Tombol Hapus -->
+                                <form action="{{ route('admin.pembayaran.destroy', $bayar->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-delete"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach

@@ -1,6 +1,5 @@
 <?php
 
-
 // PembayaranController
 
 namespace App\Http\Controllers\Admin;
@@ -23,18 +22,26 @@ class PembayaranController extends Controller
 
     public function edit($id)
     {
+        // Cek apakah pembayaran ada
         $pembayaran = Pembayaran::findOrFail($id);
-        return view('admin.pembayaran.edit', compact('pembayaran'));
+
+        // Mengambil data pemesan dan lapangan untuk ditampilkan pada form edit
+        $booking = $pembayaran->booking; // Ambil data booking terkait
+        $lapangan = $booking ? $booking->lapangan : null; // Ambil lapangan dari booking
+
+        return view('admin.pembayaran.edit', compact('pembayaran', 'booking', 'lapangan'));
     }
 
     public function update(Request $request, $id)
     {
         $pembayaran = Pembayaran::findOrFail($id);
 
+        // Validasi input dari permintaan
         $request->validate([
             'status_verifikasi' => 'required|in:pending,diterima,ditolak',
         ]);
 
+        // Memperbarui status pembayaran
         $pembayaran->update($request->only('status_verifikasi'));
 
         return redirect()->route('admin.pembayaran.index')->with('success', 'Status pembayaran diperbarui.');
@@ -42,7 +49,14 @@ class PembayaranController extends Controller
 
     public function destroy($id)
     {
-        Pembayaran::destroy($id);
-        return redirect()->route('admin.pembayaran.index')->with('success', 'Data pembayaran dihapus.');
+        // Mencoba menemukan pembayaran berdasarkan ID
+        $pembayaran = Pembayaran::find($id);
+
+        if ($pembayaran) {
+            $pembayaran->delete(); // Menghapus pembayaran
+            return redirect()->route('admin.pembayaran.index')->with('success', 'Data pembayaran dihapus.');
+        } else {
+            return redirect()->route('admin.pembayaran.index')->with('error', 'Data pembayaran tidak ditemukan.');
+        }
     }
 }

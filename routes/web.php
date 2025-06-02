@@ -48,6 +48,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:pengguna')->group(funct
     // Riwayat Booking
     Route::get('/booking/riwayat', [BookingController::class, 'riwayat'])->name('booking.history');
 
+    // Edit Booking
+    Route::get('/booking/{id}/edit', [BookingController::class, 'edit'])->name('booking.edit'); // Edit route
+    Route::put('/booking/{id}', [BookingController::class, 'update'])->name('booking.update'); // Update route
+    Route::delete('/booking/{id}', [BookingController::class, 'destroy'])->name('booking.destroy'); // Delete route
+
     // CRUD Fasilitas
     Route::resource('fasilitas', FasilitasController::class)->names('fasilitas');
 
